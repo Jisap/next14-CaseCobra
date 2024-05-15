@@ -103,6 +103,7 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
           />
 
           <div className='px-8 pb-12 pt-8'>
+            
             <h2 className='tracking-tight font-bold text-3xl'>
               Customize your case
             </h2>
@@ -149,6 +150,7 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
                 <div className='relative flex flex-col gap-3 w-full'>
                   <Label>Model</Label>
                 </div>
+                
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
