@@ -3,10 +3,10 @@
 import HandleComponent from "@/components/HandleComponent";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import NextImage from 'next/image';
 import { Rnd } from "react-rnd";
-import { Radio, RadioGroup } from '@headlessui/react'
+import { Description, Radio, RadioGroup } from '@headlessui/react' // "versión @headlessui/react": "^2.0.3"
 import { useState } from "react";
 import { COLORS, FINISHES, MATERIALS, MODELS } from "@/validators/option-validator";
 import { Label } from "@/components/ui/label";
@@ -16,8 +16,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Check, ChevronsUpDown } from "lucide-react";
+import { ArrowRight, Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BASE_PRICE } from "@/config/products";
 
 
 interface DesignConfiguratorProps {
@@ -189,13 +190,104 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
                   </DropdownMenuContent>
                 </DropdownMenu>
 
+                {[MATERIALS, FINISHES].map(({name, options:selectableOptions}) => ( // selectableOptions = total options
+                  // options[name] -> options:material -> MATERIALS.options[0]
+                  // options[name] -> options:finishes -> FINISHES.options[0]
+                  <RadioGroup 
+                    key={name} 
+                    value={options[name]} // material.options[0 | 1] | finishes.options[0 | 1]
+                    onChange={(val) => {
+                      setOptions((prev) => ({
+                        ...prev,
+                        [name]:val // material | finishes
+                      }))
+                    }}  
+                  >
+                    <Label>
+                      {name.slice(0, 1).toUpperCase() + name.slice(1)} 
+                      <div className='mt-3 space-y-4'>
+                        {selectableOptions.map((option) => (  // material.options[0 | 1] | finishes.options[0 | 1]
+                          <Radio 
+                            key={option.value}
+                            value={option}
+                            className={({ disabled, checked }:{disabled:boolean, checked:boolean}) => cn(
+                              "relative block cursor-pointer rounded-lg bg-white px-6 py-4 shadow-sm border-2 border-zinc-200 focus:outline-none ring-0 focus:ring-0 outline-none sm:flex sm:justify-between",
+                              {
+                                "border-primary": disabled || checked,
+                              }
+                            )}  
+                          >
+                            <span className='flex items-center'>
+                              <span className='flex flex-col text-sm'>
+                                <Label className='font-medium text-gray-900'>
+                                  {option.label}
+                                </Label>
+
+                                {option.description ? (
+                                  <Description
+                                    as='span'
+                                    className='text-gray-500'>
+                                    <span className='block sm:inline'>
+                                      {option.description}
+                                    </span>
+                                  </Description>
+                                ) : null}
+                              </span>
+                            </span>
+
+                            <Description
+                              as='span'
+                              className='mt-2 flex text-sm sm:ml-4 sm:mt-0 sm:flex-col sm:text-right'>
+                              <span className='font-medium text-gray-900'>
+                                {formatPrice(option.price / 100)}
+                              </span>
+                            </Description>
+                          </Radio>
+                        ))}
+                      </div>
+                    </Label>
+                  </RadioGroup>
+                ))}
+
               </div>
             </div>
 
           </div>
         </ScrollArea>
-      </div>
 
+        <div className='w-full px-8 h-16 bg-white'>
+          <div className='h-px w-full bg-zinc-200' />
+          <div className='w-full h-full flex justify-end items-center'>
+            <div className='w-full flex gap-6 items-center'>
+              <p className='font-medium whitespace-nowrap'>
+                {formatPrice(
+                  (BASE_PRICE + options.finish.price + options.material.price) /
+                  100
+                )}
+              </p>
+              <Button
+                //isLoading={isPending}
+                //disabled={isPending}
+                //loadingText="Saving"
+                // onClick={() =>
+                //   saveConfig({
+                //     configId,
+                //     color: options.color.value,
+                //     finish: options.finish.value,
+                //     material: options.material.value,
+                //     model: options.model.value,
+                //   })
+                // }
+                size='sm'
+                className='w-full'>
+                Continue
+                <ArrowRight className='h-4 w-4 ml-1.5 inline' />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   )
 }
