@@ -7,7 +7,7 @@ import { cn, formatPrice } from "@/lib/utils";
 import NextImage from 'next/image';
 import { Rnd } from "react-rnd";
 import { Description, Radio, RadioGroup } from '@headlessui/react' // "versión @headlessui/react": "^2.0.3"
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { COLORS, FINISHES, MATERIALS, MODELS } from "@/validators/option-validator";
 import { Label } from "@/components/ui/label";
 import {
@@ -40,16 +40,75 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
     model: MODELS.options[0],
     material: MATERIALS.options[0],
     finish: FINISHES.options[0],
-  })
+  });
+
+  const [renderedDimension, setRenderedDimension] = useState({
+    width: imageDimensions.width / 4,
+    height: imageDimensions.height / 4,
+  });
+
+  const [renderedPosition, setRenderedPosition] = useState({  // Posicionamiento por defecto de la imagen subida
+    x: 150,
+    y: 205,
+  });
+
+  const phoneCaseRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  async function saveConfiguration() {
+    try {
+      const {
+        left: caseLeft, // left y top definen las coordenadas de la esquina superior izda 
+        top: caseTop,   
+        width,          // ancho de la imagen del movil
+        height,         // alto de la imagen del movil
+      } = phoneCaseRef.current!.getBoundingClientRect()   // De la ref de la imagen del movil obtenemos posición y dimensiones
+    
+      const { 
+        left: containerLeft, 
+        top: containerTop 
+      } =  containerRef.current!.getBoundingClientRect()  // Del div de redimensión y posicionamiento obtenemos su posición
+    
+      const leftOffset = caseLeft - containerLeft         // Distancia horizontal entre el borde izquierdo de la imagen del móvil y el borde izquierdo del contenedor.
+      const topOffset = caseTop - containerTop
+
+      const actualX = renderedPosition.x - leftOffset     // Restar la posición actual x menos el offset situa la imagen dentro del phonecaseRef
+      const actualY = renderedPosition.y - topOffset      
+      
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const ctx = canvas.getContext('2d')
+
+      const userImage = new Image()
+      userImage.crossOrigin = 'anonymous'
+      userImage.src = imageUrl
+      await new Promise((resolve) => (userImage.onload = resolve))
+
+      ctx?.drawImage(
+        userImage,
+        actualX,
+        actualY,
+        renderedDimension.width,
+        renderedDimension.height
+      )
+    
+    } catch (error) {
+      
+    }
+  }
   
   return(
-    <div className="relative mt-20 grid grid-cols-3 mb-20 pb-20">
-      <div className='relative h-[37.5rem] overflow-hidden col-span-2 w-full max-w-4xl flex items-center
-       justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none 
-       focus:ring-2 focus:ring-primary focus:ring-offset-2'
+    <div className="relative mt-20 grid grid-cols-1 lg:grid-cols-3 mb-20 pb-20">
+      <div
+        ref={containerRef} 
+        className='relative h-[37.5rem] overflow-hidden col-span-2 w-full max-w-4xl flex items-center
+        justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center focus:outline-none 
+        focus:ring-2 focus:ring-primary focus:ring-offset-2'
       >
         <div className='relative w-60 bg-opacity-50 pointer-events-none aspect-[896/1831]'>
           <AspectRatio
+            ref={phoneCaseRef}
             ratio={896 / 1831}
             className='pointer-events-none relative z-50 aspect-[896/1831] w-full'
           >
@@ -69,12 +128,24 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
           />
         </div>
 
-        <Rnd 
+        <Rnd                                                  // Recibe la imagen subida y permite su redimensión y posicionamiento
           default= {{
             x: 150,
             y: 205,
             height: imageDimensions.height / 4,
             width: imageDimensions.width / 4  
+          }}
+          onResizeStop={(_, __, ref, ___, { x, y }) => {
+            setRenderedDimension({                             // Esta función de rnd obtiene el nuevo tamaño de la imagen subida 
+              height: parseInt(ref.style.height.slice(0, -2)), // se elimina "px" de "50px"
+              width: parseInt(ref.style.width.slice(0, -2)),
+            })
+
+            setRenderedPosition({ x, y })                      // Posición por defecto     
+          }}
+          onDragStop={(_, data) => {                           // Esta función de rnd obtiene la nueva posición de la imagen cuando se termina de hacer drag  
+            const { x, y } = data
+            setRenderedPosition({ x, y })
           }}
           className="absolute z-20 border-[3px] border-primary"
           lockAspectRatio
