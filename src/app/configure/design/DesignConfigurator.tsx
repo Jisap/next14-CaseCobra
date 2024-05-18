@@ -19,6 +19,7 @@ import {
 import { ArrowRight, Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BASE_PRICE } from "@/config/products";
+import { useUploadThing } from "@/lib/uploadthing";
 
 
 interface DesignConfiguratorProps {
@@ -55,13 +56,15 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
   const phoneCaseRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
+  const { startUpload } = useUploadThing('imageUploader')
+
   async function saveConfiguration() {
     try {
       const {
-        left: caseLeft, // left y top definen las coordenadas de la esquina superior izda 
+        left: caseLeft, 
         top: caseTop,   
-        width,          // ancho de la imagen del movil
-        height,         // alto de la imagen del movil
+        width,          
+        height,         
       } = phoneCaseRef.current!.getBoundingClientRect()   // De la ref de la imagen del movil obtenemos posición y dimensiones
     
       const { 
@@ -75,27 +78,46 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
       const actualX = renderedPosition.x - leftOffset     // Restar la posición actual x menos el offset situa la imagen dentro del phonecaseRef
       const actualY = renderedPosition.y - topOffset      
       
-      const canvas = document.createElement('canvas')
+      const canvas = document.createElement('canvas')     // Se crea un canvas con las mismas dimensiones que la imagen del móvil,
       canvas.width = width
       canvas.height = height
       const ctx = canvas.getContext('2d')
 
-      const userImage = new Image()
+      const userImage = new Image()                       // Se configura y carga la imagen del usuario de forma asíncrona y 
       userImage.crossOrigin = 'anonymous'
       userImage.src = imageUrl
       await new Promise((resolve) => (userImage.onload = resolve))
 
-      ctx?.drawImage(
+      ctx?.drawImage(                                     // luego se dibuja en el canvas con las coordenadas y dimensiones ajustadas.
         userImage,
         actualX,
         actualY,
         renderedDimension.width,
         renderedDimension.height
       )
+
+      // Convertimos el elemento html canvas a formato png
+      const base64 = canvas.toDataURL()                                       // Convierte el contenido del canvas a una URL en Base64, que es una representación de la imagen en formato PNG (data:image/png;base64 + data)
+      const base64Data = base64.split(',')[1]                                 // Extrae solo los datos en Base64, eliminando la parte data:image/png;base64,.
+
+      const blob = base64ToBlob(base64Data, 'image/png')                      // Convertimos los datos Base64 a un objeto Blob
+      const file = new File([blob], 'filename.png', { type: 'image/png' })    // Crea un objeto File a partir del Blob, con el nombre de archivo filename.png y el tipo de contenido image/png.
     
+      await startUpload([file], { configId })                                 // Se vuelve a subir a uploadThing para que se actualize  
+
     } catch (error) {
-      
+      console.log(error)
     }
+  }
+
+  function base64ToBlob(base64: string, mimeType: string) {
+    const byteCharacters = atob(base64)
+    const byteNumbers = new Array(byteCharacters.length)
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i)
+    }
+    const byteArray = new Uint8Array(byteNumbers)
+    return new Blob([byteArray], { type: mimeType })
   }
   
   return(
@@ -349,6 +371,7 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
                 //     model: options.model.value,
                 //   })
                 // }
+                onClick={() => saveConfiguration()}
                 size='sm'
                 className='w-full'>
                 Continue
