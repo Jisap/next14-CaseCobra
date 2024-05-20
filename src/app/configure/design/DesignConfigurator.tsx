@@ -79,7 +79,7 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
       const topOffset = caseTop - containerTop
 
       const actualX = renderedPosition.x - leftOffset     // Restar la posición actual x menos el offset situa la imagen dentro del phonecaseRef
-      const actualY = renderedPosition.y - topOffset      
+      const actualY = renderedPosition.y - topOffset      // Básicamente estamos ajustando las coordenadas de la imagen del usuario dentro del phoneCaseRef.
       
       const canvas = document.createElement('canvas')     // Se crea un canvas con las mismas dimensiones que la imagen del móvil,
       canvas.width = width
