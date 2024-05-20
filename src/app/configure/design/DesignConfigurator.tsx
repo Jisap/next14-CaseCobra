@@ -21,6 +21,9 @@ import { Button } from "@/components/ui/button";
 import { BASE_PRICE } from "@/config/products";
 import { useUploadThing } from "@/lib/uploadthing";
 import { useToast } from "@/components/ui/use-toast";
+import { useMutation } from "@tanstack/react-query";
+import { saveConfig as _saveConfig, SaveConfigArgs } from "./actions";
+import { useRouter } from 'next/navigation'
 
 
 interface DesignConfiguratorProps {
@@ -32,7 +35,25 @@ interface DesignConfiguratorProps {
 
 const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfiguratorProps) => {
   
-  const { toast } = useToast()
+  const { toast } = useToast();
+  const router = useRouter()
+
+  const {mutate: saveConfig, isPending} = useMutation({             // saveConfig es la action que graba la config elegida por el usuario en bd
+    mutationKey: ["save-config"],                                   // Nombre clave con el que se guarda en cache los resultados de las peticiones
+    mutationFn: async (args: SaveConfigArgs) => {                   // Ejecución de las actions: subida a uploadThings y actualización de la bd
+      await Promise.all([saveConfiguration(), _saveConfig(args)])
+    },
+    onError: () => {
+      toast({
+        title: 'Something went wrong',
+        description: 'There was an error on our end. Please try again.',
+        variant: 'destructive',
+      })
+    },
+    onSuccess: () => {
+      router.push(`/configure/preview?id=${configId}`)
+    },
+  })
 
   const [options, setOptions] = useState<{
     color: (typeof COLORS)[number]
