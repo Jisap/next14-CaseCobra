@@ -55,7 +55,7 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
     },
   })
 
-  const [options, setOptions] = useState<{
+  const [options, setOptions] = useState<{                            // Estado para las opciones del móvil
     color: (typeof COLORS)[number]
     model: (typeof MODELS.options)[number]
     material: (typeof MATERIALS.options)[number]
@@ -67,20 +67,20 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
     finish: FINISHES.options[0],
   });
 
-  const [renderedDimension, setRenderedDimension] = useState({
+  const [renderedDimension, setRenderedDimension] = useState({        // Estado para las dimensiones de la imagen
     width: imageDimensions.width / 4,
     height: imageDimensions.height / 4,
   });
 
-  const [renderedPosition, setRenderedPosition] = useState({  // Posicionamiento por defecto de la imagen subida
+  const [renderedPosition, setRenderedPosition] = useState({          // Posicionamiento por defecto de la imagen subida
     x: 150,
     y: 205,
   });
 
-  const phoneCaseRef = useRef<HTMLDivElement>(null)
+  const phoneCaseRef = useRef<HTMLDivElement>(null) 
   const containerRef = useRef<HTMLDivElement>(null)
 
-  const { startUpload } = useUploadThing('imageUploader')
+  const { startUpload } = useUploadThing('imageUploader');            // Instancia de la libreria de uploadThings que inicia la subida de files
 
   async function saveConfiguration() {
     try {
@@ -99,8 +99,8 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
       const leftOffset = caseLeft - containerLeft         // Distancia horizontal entre el borde izquierdo de la imagen del móvil y el borde izquierdo del contenedor.
       const topOffset = caseTop - containerTop
 
-      const actualX = renderedPosition.x - leftOffset     // Restar la posición actual x menos el offset situa la imagen dentro del phonecaseRef
-      const actualY = renderedPosition.y - topOffset      // Básicamente estamos ajustando las coordenadas de la imagen del usuario dentro del phoneCaseRef.
+      const actualX = renderedPosition.x - leftOffset     // Aquí se cambia la referencia de las coordenadas, pasamos del container al móvil
+      const actualY = renderedPosition.y - topOffset      // Hacer este ajuste hace que la posición elegida de la imagen tome como origen la esquina superior izda del movil
       
       const canvas = document.createElement('canvas')     // Se crea un canvas con las mismas dimensiones que la imagen del móvil,
       canvas.width = width
@@ -127,7 +127,7 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
       const blob = base64ToBlob(base64Data, 'image/png')                      // Convertimos los datos Base64 a un objeto Blob
       const file = new File([blob], 'filename.png', { type: 'image/png' })    // Crea un objeto File a partir del Blob, con el nombre de archivo filename.png y el tipo de contenido image/png.
     
-      await startUpload([file], { configId })                                 // Se vuelve a subir a uploadThing para que se actualize  
+      await startUpload([file], { configId })                                 // Se vuelve a subir a uploadThing para que se actualize 
 
     } catch (error) {
       toast({
@@ -400,7 +400,6 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
                     model: options.model.value,
                   })
                 }
-                //onClick={() => saveConfiguration()}
                 size='sm'
                 className='w-full'>
                 Continue

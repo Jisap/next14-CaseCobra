@@ -17,7 +17,7 @@ const Page = async({ searchParams }: PageProps ) => {
     return notFound()
   }
 
-  const configuration = await db.configuration.findUnique({
+  const configuration = await db.configuration.findUnique({   // Paso 2: Obtenemos la configuration de la bd
     where: { id },
   });
 
@@ -25,10 +25,10 @@ const Page = async({ searchParams }: PageProps ) => {
     return notFound()
   };
 
-  const { imageUrl, width, height } = configuration;
+  const { imageUrl, width, height } = configuration;          // Estos parámetros provienen de uploadThing
 
-  return <DesignConfigurator 
-            configId={configuration.id} 
+  return <DesignConfigurator                                  // La pasamos a DesignConfigurator
+            configId={configuration.id}                     
             imageUrl={imageUrl} 
             imageDimensions={{ width, height }}
           />
