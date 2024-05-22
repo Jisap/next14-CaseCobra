@@ -17,7 +17,7 @@ const Page = async({ searchParams }: PageProps) => {
     return notFound()
   }
 
-  const configuration = await db.configuration.findUnique({
+  const configuration = await db.configuration.findUnique({ // Se obtiene el objeto de la configuration a partir del id que viene en la url
     where: { id },
   })
 
