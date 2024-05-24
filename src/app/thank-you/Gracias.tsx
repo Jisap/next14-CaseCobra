@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react'
 import PhonePreview from '../../components/PhonePreview'
 import { formatPrice } from '@/lib/utils'
 
-const ThankYou = () => {
+const Gracias = () => {
   const searchParams = useSearchParams()
   const orderId = searchParams.get('orderId') || ''
 
@@ -146,4 +146,4 @@ const ThankYou = () => {
   )
 }
 
-export default ThankYou
+export default Gracias
