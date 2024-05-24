@@ -1,7 +1,7 @@
 
 
 import { Suspense } from 'react'
-import ThankYou from '../thank-you/ThankYou'
+import ThankYou from '../../app/thank-you/ThankYou'
 
 const Page = () => {
 
