@@ -11,13 +11,13 @@ const Page = () => {
   // const orderId = searchParams.get('orderId') || ''
 
   return (
-    <Suspense>
-      <ThankYou />
-    </Suspense>
-    // <>
-    //   <p>Than you page, {`orderId: ${orderId}`}</p>
+    // <Suspense>
+    //   <ThankYou />
+    // </Suspense>
+    <>
+      <p>Than you page</p>
       
-    // </>
+    </>
   )
     
 }
