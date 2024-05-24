@@ -98,10 +98,12 @@ export default function Home() {
               <img
                 src='/your-image.png'
                 className='absolute w-40 lg:w-52 left-56 -top-20 select-none hidden sm:block lg:hidden xl:block'
+                alt=''
               />
               <img
                 src='/line.png'
                 className='absolute w-20 -left-6 -bottom-6 select-none'
+                alt=''
               />
               <Phone 
                 className='w-64' 
@@ -231,12 +233,14 @@ export default function Home() {
               <img
                 src='/arrow.png'
                 className='absolute top-[25rem] md:top-1/2 -translate-y-1/2 z-10 left-1/2 -translate-x-1/2 rotate-90 md:rotate-0'
+                alt=''
               />
 
               <div className='relative h-80 md:h-full w-full md:justify-self-end max-w-sm rounded-xl bg-gray-900/5 ring-inset ring-gray-900/10 lg:rounded-2xl'>
                 <img
                   src='/horse.jpg'
                   className='rounded-md object-cover bg-white shadow-2xl ring-1 ring-gray-900/10 h-full w-full'
+                  alt=''
                 />
               </div>
 
