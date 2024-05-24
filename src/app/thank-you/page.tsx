@@ -7,17 +7,17 @@ import { useSearchParams } from 'next/navigation'
 
 const Page = () => {
 
-  const searchParams = useSearchParams()
-  const orderId = searchParams.get('orderId') || ''
+  // const searchParams = useSearchParams()
+  // const orderId = searchParams.get('orderId') || ''
 
   return (
-    // <Suspense>
-    //   <ThankYou />
-    // </Suspense>
-    <>
-      <p>Than you page, {`orderId: ${orderId}`}</p>
+    <Suspense>
+      <ThankYou />
+    </Suspense>
+    // <>
+    //   <p>Than you page, {`orderId: ${orderId}`}</p>
       
-    </>
+    // </>
   )
     
 }
