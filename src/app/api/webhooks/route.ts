@@ -55,23 +55,21 @@ export async function POST(req: Request) {                              // Reali
           shippingAddress: {
             create: {
               name: session.customer_details!.name!,
-              street: shippingAddress!.line1!,
               city: shippingAddress!.city!,
-              postalCode: shippingAddress!.postal_code!,
               country: shippingAddress!.country!,
+              postalCode: shippingAddress!.postal_code!,
+              street: shippingAddress!.line1!,
               state: shippingAddress!.state,
-              phoneNumber: session.customer_details!.phone!,
             },
           },
           billingAddress: {
             create: {
               name: session.customer_details!.name!,
-              street: billingAddress!.line1!,
               city: billingAddress!.city!,
-              postalCode: billingAddress!.postal_code!,
               country: billingAddress!.country!,
+              postalCode: billingAddress!.postal_code!,
+              street: billingAddress!.line1!,
               state: billingAddress!.state,
-              phoneNumber: session.customer_details!.phone!,
             },
           },
         },
