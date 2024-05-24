@@ -44,6 +44,7 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
     mutationKey: ['get-checkout-session'],
     mutationFn: createCheckoutSession,
     onSuccess: ({ url }) => {
+      console.log({url})
       if (url) router.push(url)
       else throw new Error('Unable to retrieve payment URL.')
     },

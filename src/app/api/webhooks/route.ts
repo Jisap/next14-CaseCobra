@@ -1,12 +1,8 @@
-import { db } from "@/db";
+import { db } from "../../../db";
 import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers"
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-
-
-
-
 
 
 export async function POST(req: Request) {                              // Realizado el pago en stripe el webhook hace una petición a nuestro server para modificar nuestra bd
@@ -17,14 +13,16 @@ export async function POST(req: Request) {                              // Reali
     const signature = headers().get('stripe-signature')                 // Obtención de la firma de Stripe de los headers
 
     if (!signature) {
+      console.error('Missing stripe-signature header');
       return new Response('Invalid signature', { status: 400 })
     }
 
-    const event = stripe.webhooks.constructEvent(                       // Construcción del evento de Stripe a partir del cuerpo y la firma
-      body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    )
+      const event = stripe.webhooks.constructEvent(                     // Construcción del evento de Stripe a partir del cuerpo y la firma
+        body,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET!
+      )
+    
 
     if (event.type === 'checkout.session.completed') {                  // Manejo del evento si es del tipo 'checkout.session.completed
 
@@ -46,6 +44,8 @@ export async function POST(req: Request) {                              // Reali
       const billingAddress = session.customer_details!.address          // Obtención de las direcciones de facturación y envío del cliente
       const shippingAddress = session.shipping_details!.address
 
+      console.log(`Updating order with ID: ${orderId} for user: ${userId}`);
+
       const updatedOrder = await db.order.update({                      // Actualización del pedido en la base de datos
         where: {
           id: orderId,
@@ -55,25 +55,30 @@ export async function POST(req: Request) {                              // Reali
           shippingAddress: {
             create: {
               name: session.customer_details!.name!,
-              city: shippingAddress!.city!,
-              country: shippingAddress!.country!,
-              postalCode: shippingAddress!.postal_code!,
               street: shippingAddress!.line1!,
+              city: shippingAddress!.city!,
+              postalCode: shippingAddress!.postal_code!,
+              country: shippingAddress!.country!,
               state: shippingAddress!.state,
+              phoneNumber: session.customer_details!.phone!,
             },
           },
           billingAddress: {
             create: {
               name: session.customer_details!.name!,
-              city: billingAddress!.city!,
-              country: billingAddress!.country!,
-              postalCode: billingAddress!.postal_code!,
               street: billingAddress!.line1!,
+              city: billingAddress!.city!,
+              postalCode: billingAddress!.postal_code!,
+              country: billingAddress!.country!,
               state: billingAddress!.state,
+              phoneNumber: session.customer_details!.phone!,
             },
           },
         },
       })
+
+      console.log('Order updated successfully', updatedOrder);
+
 
       // await resend.emails.send({
       //   from: 'CaseCobra <hello@joshtriedcoding.com>',
