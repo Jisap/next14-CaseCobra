@@ -60,7 +60,7 @@ const DesignPreview = ({ configuration }: { configuration: Configuration }) => {
   const handleCheckout = () => {
     if (user) {
       // create payment session
-      createPaymentSession({ configId: id })
+      createPaymentSession({ configId: id }) // Tanstack -> createPaymentSession -> action: createChekoutSession -> stripe -> [webhook modifica isPaid en bd] && [/thank-you?orderId]
     } else {
       // need to log in
       localStorage.setItem('configurationId', id)
