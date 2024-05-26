@@ -43,13 +43,13 @@ const PhonePreview = ({
       <div
         className='absolute z-20 scale-[1.0352]'
         style={{
-          left:                                                         // left y top se calculan en función del tamaño del contenedor para centrar la imagn
-            renderedDimensions.width / 2 -                              // Ajuste horizontal para centrar la imagen
+          left:                                                         // left y top se calculan en función del tamaño del contenedor para centrar la imagen en la foto de muestra
+            renderedDimensions.width / 2 -                              // Ajuste horizontal para centrar la imagen (mitad de la pantalla - cantidad pequeña a la izda)
             renderedDimensions.width / (1216 / 121),
           top: renderedDimensions.height / 6.22,                        // Ajuste vertical para posicionar correctamente la imagen
         }}>
         <img
-          width={renderedDimensions.width / (3000 / 637)}
+          width={renderedDimensions.width / (3000 / 637)}               // Se ajusta en función del ancho actual del contenedor para mantener las proporciones correctas
           className={cn(
             'phone-skew relative z-20 rounded-t-[15px] rounded-b-[10px] md:rounded-t-[30px] md:rounded-b-[20px]',
             caseBackgroundColor
@@ -61,7 +61,7 @@ const PhonePreview = ({
       <div className='relative h-full w-full z-40'>
         <img
           alt='phone'
-          src='/clearphone.png'
+          src='/clearphone.png' // Foto de muestra ->Imagen con el móvil en la mano
           className='pointer-events-none h-full w-full antialiased rounded-md'
         />
       </div>
