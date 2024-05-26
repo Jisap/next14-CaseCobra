@@ -42,8 +42,8 @@ export const ourFileRouter = {                                                  
           where: {
             id: configId                                                         // con el nuevo id  
           },
-          data: {                                                                // y la imagen modificada (nuevas dim y pos) para adaptarla al móvil 
-            croppedImageUrl: file.url
+          data: {                                                                // y la imagen modificada (nuevas dim y pos) 
+            croppedImageUrl: file.url                                            // Esta imagen esta referenciada al container del movil y puede estar recortada y posicionada     
           }
         })
 

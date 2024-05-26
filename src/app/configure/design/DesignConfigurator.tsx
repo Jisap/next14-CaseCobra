@@ -85,7 +85,7 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
   async function saveConfiguration() {
     try {
       const {
-        left: caseLeft, 
+        left: caseLeft, // Se renombran
         top: caseTop,   
         width,          
         height,         
@@ -113,7 +113,7 @@ const DesignConfigurator = ({ configId, imageUrl, imageDimensions }: DesignConfi
       await new Promise((resolve) => (userImage.onload = resolve))
 
       ctx?.drawImage(                                     // luego se dibuja en el canvas con las coordenadas y dimensiones ajustadas.
-        userImage,
+        userImage,                                        // La imagen que se dibuja en el canvas y que luego se almacena en base de datos esta delimitada por la referencia del movil 
         actualX,
         actualY,
         renderedDimension.width,
