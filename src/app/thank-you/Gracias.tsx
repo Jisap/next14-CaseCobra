@@ -7,8 +7,9 @@ import { Loader2 } from 'lucide-react'
 import PhonePreview from '../../components/PhonePreview'
 import { formatPrice } from '@/lib/utils'
 
-const Gracias = () => {
-  const searchParams = useSearchParams()
+const Gracias = () => {                                   // Tras realizar el pago en stripe y poner isPaid=true en bd llegamos a esta página desde DesignPreview
+  
+  const searchParams = useSearchParams();                 // stripe redirige a /thank-you?orderId y obtenemos dicha orderId     
   const orderId = searchParams.get('orderId') || ''
 
   const { data } = useQuery({
@@ -79,7 +80,7 @@ const Gracias = () => {
 
         <div className='flex space-x-6 overflow-hidden mt-4 rounded-xl bg-gray-900/5 ring-1 ring-inset ring-gray-900/10 lg:rounded-2xl'>
           <PhonePreview
-            croppedImageUrl={configuration.croppedImageUrl!}
+            croppedImageUrl={configuration.croppedImageUrl!} // Se envía la imagen modificada
             color={color!}
           />
         </div>

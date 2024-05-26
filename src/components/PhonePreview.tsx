@@ -12,6 +12,7 @@ const PhonePreview = ({
   croppedImageUrl: string
   color: CaseColor
 }) => {
+
   const ref = useRef<HTMLDivElement>(null)
 
   const [renderedDimensions, setRenderedDimensions] = useState({
@@ -21,7 +22,7 @@ const PhonePreview = ({
 
   const handleResize = () => {
     if (!ref.current) return
-    const { width, height } = ref.current.getBoundingClientRect()
+    const { width, height } = ref.current.getBoundingClientRect()       // Actualiza las dimensiones cuando se cambia el tamaño de la ventana.
     setRenderedDimensions({ width, height })
   }
 
@@ -33,7 +34,7 @@ const PhonePreview = ({
     return () => window.removeEventListener('resize', handleResize)
   }, [ref.current])
 
-  let caseBackgroundColor = 'bg-zinc-950'
+  let caseBackgroundColor = 'bg-zinc-950'                               // caseBackgroundColor se determina en función del color del estuche del móvil.
   if (color === 'blue') caseBackgroundColor = 'bg-blue-950'
   if (color === 'rose') caseBackgroundColor = 'bg-rose-950'
 
@@ -42,10 +43,10 @@ const PhonePreview = ({
       <div
         className='absolute z-20 scale-[1.0352]'
         style={{
-          left:
-            renderedDimensions.width / 2 -
+          left:                                                         // left y top se calculan en función del tamaño del contenedor para centrar la imagn
+            renderedDimensions.width / 2 -                              // Ajuste horizontal para centrar la imagen
             renderedDimensions.width / (1216 / 121),
-          top: renderedDimensions.height / 6.22,
+          top: renderedDimensions.height / 6.22,                        // Ajuste vertical para posicionar correctamente la imagen
         }}>
         <img
           width={renderedDimensions.width / (3000 / 637)}
