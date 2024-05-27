@@ -3,7 +3,10 @@ import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers"
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { Resend } from 'resend'
+import OrderReceivedEmail from "@/components/emails/OrderReceivedEmail";
 
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: Request) {                              // Realizado el pago en stripe el webhook hace una petición a nuestro server para modificar nuestra bd
   
@@ -78,24 +81,24 @@ export async function POST(req: Request) {                              // Reali
       console.log('Order updated successfully', updatedOrder);
 
 
-      // await resend.emails.send({
-      //   from: 'CaseCobra <hello@joshtriedcoding.com>',
-      //   to: [event.data.object.customer_details.email],
-      //   subject: 'Thanks for your order!',
-      //   react: OrderReceivedEmail({
-      //     orderId,
-      //     orderDate: updatedOrder.createdAt.toLocaleDateString(),
-      //     // @ts-ignore
-      //     shippingAddress: {
-      //       name: session.customer_details!.name!,
-      //       city: shippingAddress!.city!,
-      //       country: shippingAddress!.country!,
-      //       postalCode: shippingAddress!.postal_code!,
-      //       street: shippingAddress!.line1!,
-      //       state: shippingAddress!.state,
-      //     },
-      //   }),
-      // })
+      await resend.emails.send({
+        from: 'CaseCobra <jisapjisap@gmail.com>',
+        to: [event.data.object.customer_details.email],
+        subject: 'Thanks for your order!',
+        react: OrderReceivedEmail({
+          orderId,
+          orderDate: updatedOrder.createdAt.toLocaleDateString(),
+          // @ts-ignore
+          shippingAddress: {
+            name: session.customer_details!.name!,
+            city: shippingAddress!.city!,
+            country: shippingAddress!.country!,
+            postalCode: shippingAddress!.postal_code!,
+            street: shippingAddress!.line1!,
+            state: shippingAddress!.state,
+          },
+        }),
+      })
 
       return NextResponse.json({ result: event, ok: true })             // Respuesta exitosa con el resultado del evento:
     }
