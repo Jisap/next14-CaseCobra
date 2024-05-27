@@ -83,7 +83,7 @@ export async function POST(req: Request) {                              // Reali
 
       await resend.emails.send({
         from: 'CaseCobra <jisapjisap@gmail.com>',
-        to: [event.data.object.customer_details.email],
+        to: 'delivered@resend.dev',//[event.data.object.customer_details.email],
         subject: 'Thanks for your order!',
         react: OrderReceivedEmail({
           orderId,
