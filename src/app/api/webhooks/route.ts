@@ -98,7 +98,7 @@ export async function POST(req: Request) {                              // Reali
             state: shippingAddress!.state,
           },
         }),
-      })
+      });
 
       return NextResponse.json({ result: event, ok: true })             // Respuesta exitosa con el resultado del evento:
     }
